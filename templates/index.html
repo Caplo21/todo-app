@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Todo App</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+  <!-- ── Header ─────────────────────────────────────────────────────────── -->
+  <header class="header">
+    <div class="header-logo">✓</div>
+    <h1>Todo App</h1>
+    <span class="header-sub">Organiser dine opgaver</span>
+    <div class="header-actions">
+      <button class="sync-btn" id="sync-btn" onclick="handleSync()">
+        <span class="sync-icon" id="sync-icon">↻</span>
+        <span id="sync-label">Sync Todoist</span>
+      </button>
+      <button class="theme-btn" onclick="toggleTheme()">
+        <span id="theme-label">☾  Mørkt tema</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- ── Body ───────────────────────────────────────────────────────────── -->
+  <div class="app-body">
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-section">
+        <div class="sidebar-section-title">Oversigt</div>
+        <div class="stat-row"><span class="icon">≡</span> Alle todos  <span class="value" id="stat-total">0</span></div>
+        <div class="stat-row stat-clickable" data-filter="done"    onclick="selectFilter('done')">   <span class="icon">✓</span> Færdige     <span class="value" id="stat-done">0</span></div>
+        <div class="stat-row stat-clickable" data-filter="active"  onclick="selectFilter('active')"> <span class="icon">○</span> Aktive      <span class="value" id="stat-active">0</span></div>
+        <div class="stat-row stat-clickable stat-overdue" data-filter="overdue" onclick="selectFilter('overdue')"><span class="icon">⚠</span> Overskredet <span class="value" id="stat-overdue">0</span></div>
+      </div>
+
+      <div class="sidebar-section">
+        <div class="sidebar-section-title">Kategorier</div>
+        <button class="cat-btn active" data-cat="Alle"    onclick="selectCategory('Alle')">
+          <span class="icon">☰</span> Alle    <span class="badge"></span>
+        </button>
+        <button class="cat-btn" data-cat="Arbejde" onclick="selectCategory('Arbejde')">
+          <span class="icon">⚒</span> Arbejde <span class="badge"></span>
+        </button>
+        <button class="cat-btn" data-cat="Privat"  onclick="selectCategory('Privat')">
+          <span class="icon">⌂</span> Privat  <span class="badge"></span>
+        </button>
+        <button class="cat-btn" data-cat="Indkøb"  onclick="selectCategory('Indkøb')">
+          <span class="icon">☷</span> Indkøb  <span class="badge"></span>
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main -->
+    <main class="main">
+      <!-- Toolbar -->
+      <div class="toolbar">
+        <div class="search-box">
+          <span class="icon">⌕</span>
+          <input type="text" id="search" placeholder="Søg i todos..." oninput="handleSearch()">
+        </div>
+        <select class="sort-select" onchange="handleSort(this.value)">
+          <option value="newest">Dato (nyeste)</option>
+          <option value="oldest">Dato (ældste)</option>
+          <option value="priority">Prioritet</option>
+          <option value="alpha">Alfabetisk</option>
+        </select>
+      </div>
+
+      <!-- Todo list -->
+      <div class="todo-list" id="todo-list"></div>
+
+      <!-- Add bar -->
+      <div class="add-bar">
+        <div class="add-row">
+          <input type="text" id="add-text" placeholder="Hvad skal du lave?">
+          <button class="btn-add" onclick="handleAdd()">＋ Tilføj</button>
+        </div>
+        <div class="add-options">
+          <select id="add-category">
+            <option value="">Kategori</option>
+            <option value="Arbejde">Arbejde</option>
+            <option value="Privat">Privat</option>
+            <option value="Indkøb">Indkøb</option>
+          </select>
+          <select id="add-priority">
+            <option value="Høj">Høj</option>
+            <option value="Medium" selected>Medium</option>
+            <option value="Lav">Lav</option>
+          </select>
+          <input type="date" id="add-deadline" style="width:140px">
+        </div>
+      </div>
+    </main>
+
+    <!-- Detail panel -->
+    <aside class="detail-panel">
+      <div class="detail-title">Detaljer</div>
+
+      <div id="detail-empty" class="detail-empty">
+        <span class="icon">←</span>
+        Vælg en todo<br>for at se detaljer
+      </div>
+
+      <div id="detail-content" style="display:none">
+        <div class="detail-field">
+          <div class="detail-field-label">✎ Tekst</div>
+          <div class="detail-field-value" id="d-text">-</div>
+        </div>
+        <div class="detail-field">
+          <div class="detail-field-label">☰ Kategori</div>
+          <div class="detail-field-value" id="d-category">-</div>
+        </div>
+        <div class="detail-field">
+          <div class="detail-field-label">★ Prioritet</div>
+          <div class="detail-field-value" id="d-priority">-</div>
+        </div>
+        <div class="detail-field">
+          <div class="detail-field-label">⧖ Deadline</div>
+          <div class="detail-field-value" id="d-deadline">-</div>
+        </div>
+        <div class="detail-field">
+          <div class="detail-field-label">● Status</div>
+          <div class="detail-field-value" id="d-status">-</div>
+        </div>
+        <div class="detail-field">
+          <div class="detail-field-label">📎 Vedhæftet fil</div>
+          <div class="detail-field-value" id="d-attachment">-</div>
+        </div>
+      </div>
+
+      <div id="detail-actions" class="detail-actions" style="display:none">
+        <button class="btn-action btn-toggle" id="btn-toggle" onclick="handleToggle()">✓  Færdiggør</button>
+        <button class="btn-action btn-edit" onclick="handleEdit()">✎  Rediger</button>
+        <button class="btn-action btn-delete" onclick="handleDelete()">✕  Slet</button>
+      </div>
+    </aside>
+  </div>
+
+  <!-- Status bar -->
+  <div class="statusbar" id="statusbar"></div>
+
+  <!-- ── Edit modal ─────────────────────────────────────────────────────── -->
+  <div class="modal-overlay" id="modal-overlay">
+    <div class="modal">
+      <h2>✎  Rediger todo</h2>
+
+      <label for="edit-text">Tekst</label>
+      <input type="text" id="edit-text">
+
+      <div class="modal-row">
+        <div>
+          <label for="edit-category">Kategori</label>
+          <select id="edit-category">
+            <option value="">Ingen</option>
+            <option value="Arbejde">Arbejde</option>
+            <option value="Privat">Privat</option>
+            <option value="Indkøb">Indkøb</option>
+          </select>
+        </div>
+        <div>
+          <label for="edit-priority">Prioritet</label>
+          <select id="edit-priority">
+            <option value="Høj">Høj</option>
+            <option value="Medium">Medium</option>
+            <option value="Lav">Lav</option>
+          </select>
+        </div>
+      </div>
+
+      <label for="edit-deadline">Deadline</label>
+      <input type="date" id="edit-deadline">
+
+      <div class="modal-actions">
+        <button class="btn-cancel" onclick="closeModal()">Annuller</button>
+        <button class="btn-save" onclick="handleSaveEdit()">✓  Gem ændringer</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
