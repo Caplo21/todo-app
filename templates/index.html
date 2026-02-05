@@ -34,7 +34,7 @@
     <aside class="sidebar">
       <div class="sidebar-section">
         <div class="sidebar-section-title">Oversigt</div>
-        <div class="stat-row"><span class="icon">≡</span> Alle todos  <span class="value" id="stat-total">0</span></div>
+        <div class="stat-row stat-clickable" data-filter="alle" onclick="selectFilter('alle')"><span class="icon">≡</span> Alle todos  <span class="value" id="stat-total">0</span></div>
         <div class="stat-row stat-clickable" data-filter="done"    onclick="selectFilter('done')">   <span class="icon">✓</span> Færdige     <span class="value" id="stat-done">0</span></div>
         <div class="stat-row stat-clickable" data-filter="active"  onclick="selectFilter('active')"> <span class="icon">○</span> Aktive      <span class="value" id="stat-active">0</span></div>
         <div class="stat-row stat-clickable stat-overdue" data-filter="overdue" onclick="selectFilter('overdue')"><span class="icon">⚠</span> Overskredet <span class="value" id="stat-overdue">0</span></div>
